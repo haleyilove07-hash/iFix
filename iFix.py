@@ -8,11 +8,9 @@ import sys
 import threading
 import tkinter as tk
 import webbrowser
-from pathlib import Path
 from tkinter import ttk
 
 
-APP_DIR = Path(__file__).resolve().parent
 BACKGROUND = "#f2f5f2"
 PAPER = "#ffffff"
 INK = "#17231f"
@@ -22,17 +20,9 @@ WARNING = "#a75723"
 
 
 def device_info_command():
-    """Find an installed read-only libimobiledevice command."""
+    """Find the host's installed read-only libimobiledevice command."""
     system_command = shutil.which("ideviceinfo")
-    if system_command:
-        return [system_command]
-
-    if sys.platform == "darwin":
-        bundled_command = APP_DIR / "device" / "ideviceinfo"
-        if bundled_command.is_file():
-            return [str(bundled_command)]
-
-    return None
+    return [system_command] if system_command else None
 
 
 def parse_device_info(output):
@@ -52,7 +42,7 @@ def parse_device_info(output):
 
 
 def collect_diagnostics():
-    """Query a trusted host ideviceinfo installation without shell commands."""
+    """Query ideviceinfo without shell commands or device modifications."""
     command = device_info_command()
     if command is None:
         if sys.platform == "darwin":

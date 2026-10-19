@@ -1,7 +1,5 @@
 import subprocess
-import tempfile
 import unittest
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -29,23 +27,13 @@ class DeviceInfoTests(unittest.TestCase):
             },
         )
 
-    def test_command_prefers_installed_ideviceinfo(self):
+    def test_command_uses_installed_ideviceinfo(self):
         with patch("iFix.shutil.which", return_value="/usr/bin/ideviceinfo"):
             self.assertEqual(iFix.device_info_command(), ["/usr/bin/ideviceinfo"])
 
-    def test_command_uses_bundled_tool_on_macos(self):
-        with tempfile.TemporaryDirectory() as temporary_directory:
-            app_directory = Path(temporary_directory)
-            bundled_tool = app_directory / "device" / "ideviceinfo"
-            bundled_tool.parent.mkdir()
-            bundled_tool.touch()
-
-            with (
-                patch("iFix.shutil.which", return_value=None),
-                patch("iFix.sys.platform", "darwin"),
-                patch("iFix.APP_DIR", app_directory),
-            ):
-                self.assertEqual(iFix.device_info_command(), [str(bundled_tool)])
+    def test_command_does_not_fall_back_to_archived_bundled_binary(self):
+        with patch("iFix.shutil.which", return_value=None):
+            self.assertIsNone(iFix.device_info_command())
 
     def test_successful_check_returns_filtered_details(self):
         output = "ProductType: iPhone15,2\nProductVersion: 17.6\nSerialNumber: private"
