@@ -1,17 +1,15 @@
-# Installation with PY3
+# Run iFix with Python
 
-<h3 align"center">Install this: https://www.appletech752.com/dependencies.sh
-<h3 align"center">Run bash (drag and drop the file)
-<h3 align"center">Download iFix and unzip it
-<h3 align"center">Open a terminal window and cd to the directory that iFix was downloaded to.
-<h3 align"center">Run git init -b main
-<h3 align"center">Run sudo xattr -rd com.apple.quarantine ./*
-<h3 align"center">Run sudo xattr -d com.apple.quarantine ./*
-<h3 align"center">Run sudo chmod 755 ./*
-<h3 align"center">Now cd the device folder inside the iFix folder and run the last 3 commands above again
-<h3 align"center">cd the iFix directory again
-<h3 align"center">to launch the app, run this in terminal:
+Install Python 3, Tkinter, and `ideviceinfo` from libimobiledevice. The Tkinter package may be distributed separately from Python by your operating system.
+
+On macOS, install libimobiledevice with `brew install libimobiledevice`. On Debian or Ubuntu, install `libimobiledevice-utils` with your package manager.
+
+Connect and unlock the device, accept the Trust prompt if asked, and run this from the iFix directory:
+
+```sh
 python3 iFix.py
-<h3 align"center">now click for ios 12-14 start checkra1n and for ios 15-16 start palera1n
-<h3 align"center">When the device is jailbroken, you can click bypass ios 12-16 
-<h3 align"center">bypass done
+```
+
+Select **Refresh** to check the device. The copied diagnostic report includes the model and software version but excludes the serial number and UDID. This tool is read-only; it cannot change supervision or management enrollment. Contact the managing organization for enrollment help.
+
+See the [project README](../README.md) for requirements and archived-project details.

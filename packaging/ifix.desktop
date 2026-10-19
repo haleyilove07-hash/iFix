@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=iFix Device Support
+Comment=Read-only diagnostics for iPhone and iPad
+Exec=/usr/bin/ifix
+TryExec=/usr/bin/ifix
+Icon=ifix
+Terminal=false
+Categories=Utility;System;
+StartupNotify=true

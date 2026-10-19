@@ -1,5 +1,4 @@
-# Select a tutorial
-<br>
-https://github.com/hackt1vator/TUTORIALS/normal.md
-<br>
-https://github.com/hackt1vator/TUTORIALS/python.md
+# iFix tutorials
+
+- [Run on macOS or Linux](normal.md)
+- [Run with Python](python.md)

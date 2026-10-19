@@ -1,0 +1,12 @@
+Package: ifix-device-support
+Version: 1.0.0-1
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: iFix contributors <noreply@example.invalid>
+Homepage: https://github.com/Hackt1vator/iFix
+Depends: python3, python3-tk, libimobiledevice-utils
+Description: Read-only iOS device support diagnostics
+ iFix displays non-identifying device model and software details for support.
+ It does not change device settings or management enrollment.
+ This package excludes the archived macOS utilities.
