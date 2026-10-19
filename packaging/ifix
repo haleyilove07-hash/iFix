@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /usr/bin/env python3 /usr/lib/ifix/iFix.pyz "$@"
+exec /usr/bin/env python3 /usr/libexec/ifix/iFix.pyz "$@"
