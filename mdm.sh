@@ -93,8 +93,31 @@ IPROXY_PID=$!
 trap 'kill "$IPROXY_PID" >/dev/null 2>&1' EXIT
 sleep 2
 
-if ! kill -0 "$IPROXY_PID" >/dev/null 2>&1; then
-    echo "ERROR: iproxy could not start (port $LOCAL_PORT in use, or no device attached)." >&2
+# iproxy blocks forever when usbmuxd has no matching device instead of failing,
+# so wait for the local listener to actually open before using the tunnel.
+listening=0
+attempt=0
+while [ "$attempt" -lt 8 ]; do
+    attempt=$((attempt + 1))
+    if ! kill -0 "$IPROXY_PID" >/dev/null 2>&1; then
+        break
+    fi
+    if (exec 3<>"/dev/tcp/127.0.0.1/$LOCAL_PORT") 2>/dev/null; then
+        listening=1
+        break
+    fi
+    sleep 1
+done
+
+if [ "$listening" -ne 1 ]; then
+    echo "ERROR: nothing is listening on 127.0.0.1:$LOCAL_PORT after ${attempt}s." >&2
+    echo "       The device is probably not reachable by usbmuxd:" >&2
+    echo "         - USB: attach it to WSL first (usbipd attach --wsl --busid <id>)" >&2
+    echo "         - USB: check the -u UDID matches this device" >&2
+    echo "         - Wi-Fi: use -n, and make sure Wi-Fi sync is enabled" >&2
+    echo "         - port $LOCAL_PORT may be in use; try -p 5555" >&2
+    kill "$IPROXY_PID" >/dev/null 2>&1
+    trap - EXIT
     exit 1
 fi
 
