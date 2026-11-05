@@ -24,6 +24,7 @@
 - Palera1n Loader IPA file, which is available at https://nightly.link/palera1n/loader/workflows/build/main/palera1n.zip
 - **USB-A** cables are recommended to use, USB-C may have issues with palera1n and getting into DFU mode.<details><summary>Technical explanation</summary>The BootROM will only enter DFU if it detects USB voltage, which boils down to checking whether a certain pin is asserted from the Tristar chip. The Tristar does this based on the cable's accessory ID, and apparently USB-A and USB-C cables have different accessory IDs, and the one of the USB-C cables makes the Tristar not assert the USB voltage pin.</details>
 - Slive dependencies, available here: https://www.appletech752.com/dependencies.sh
+- **Windows 11 users:** run it through WSL 2 - see [WINDOWS.md](WINDOWS.md) for the one-command setup, launcher and known USB/DFU limits.
 
 ### Stolen Requirements
 - A Linux or macOS computer
