@@ -79,6 +79,25 @@ if [ "$TEST_ONLY" -eq 0 ] && [ ! -f "$PLIST" ]; then
     exit 1
 fi
 
+# Fail fast and precisely when usbmuxd has nothing to tunnel to: iproxy still
+# opens the local port, so the failure would otherwise look like a jailbreak
+# problem instead of a missing device.
+if command -v idevice_id >/dev/null 2>&1; then
+    CONNECTED=$(idevice_id -l 2>/dev/null | tr -d '\r')
+    if [ -z "$CONNECTED" ]; then
+        echo "ERROR: usbmuxd sees no device at all." >&2
+        echo "       USB in WSL: usbipd attach --wsl --busid <id>" >&2
+        echo "       Wi-Fi: same network, Wi-Fi sync enabled, then use -n" >&2
+        exit 1
+    fi
+    if [ -n "$UDID" ] && ! printf '%s\n' "$CONNECTED" | grep -qi "^$UDID$"; then
+        echo "ERROR: UDID $UDID is not connected. usbmuxd has:" >&2
+        printf '         %s\n' $CONNECTED >&2
+        exit 1
+    fi
+    echo "Device(s) in usbmuxd: $(printf '%s' "$CONNECTED" | tr '\n' ' ')"
+fi
+
 # Only drop the key for the local tunnel, do not wipe the user's known_hosts.
 ssh-keygen -R "[localhost]:$LOCAL_PORT" >/dev/null 2>&1 || true
 
