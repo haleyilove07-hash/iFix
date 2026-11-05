@@ -111,3 +111,40 @@ tight USB timing. Many people never get past the exploit step this way. If
 | `mdm.sh exited with code 1` | Device not jailbroken, `iproxy` could not bind, or the USB device is not attached to WSL. |
 | GUI does not appear | Needs Windows 11 22H2+ (WSLg). Otherwise run `python3 iFix.py` from a terminal with an X server. |
 | `No device detected! 0x404` | `usbipd attach --wsl --busid <id>`, then `idevicepair pair`. |
+
+## SSH tunnel (both devices, incl. iPad Air 1 on iOS 12.5.8)
+
+The tunnel is plain OpenSSH plus `iproxy`; checkra1n (iOS 12-14) and palera1n
+(iOS 15+) both run dropbear on port **44** with root's password **alpine**, so one
+script covers every supported device. In WSL, as root:
+
+    apt install openssh-client sshpass libusbmuxd-tools usbmuxd
+
+`iproxy` must be the libusbmuxd-tools build, which supports device targeting:
+
+    -u, --udid UDID    target a specific device
+    -n, --network      device is reachable over Wi-Fi sync instead of USB
+    -l, --local        force the USB transport (default)
+
+Verify the tunnel without writing anything, before any bypass:
+
+    ./mdm.sh --test -u <UDID>          # USB
+    ./mdm.sh --test -n -u <UDID>       # Wi-Fi sync
+
+That matters here because two iPads are registered in usbmux at once (iPad7,11
+and iPad4,2). Run the bypass against one of them:
+
+    ./mdm.sh -u <UDID>                 # USB, default local port 4444
+    ./mdm.sh -n -u <UDID> -p 5555      # network device, separate local port
+
+### iPad Air (1st gen / iPad4,2, iOS 12.5.8)
+
+- It is an **A7**: checkm8 applies, but palera1n only handles iOS 15+, so this is
+  a **checkra1n** job. iOS 12 needs no fakefs, so `mount -o rw,union,update /`
+  succeeds there (and mdm.sh tolerates it failing anyway).
+- Some checkra1n releases leave SSH off; enable it when prompted, then confirm
+  with `./mdm.sh --test -u <UDID>`.
+- Enable Trust + Wi-Fi sync once over USB, then `-n` needs no cable: find the IP
+  under Settings > Wi-Fi.
+- The profile path is the same on iOS 12 as on 18.x (CloudConfigurationDetails
+  under systemgroup.com.apple.configurationprofiles).
